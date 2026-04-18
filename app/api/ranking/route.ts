@@ -42,13 +42,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "Valid test type is required." }, { status: 400 });
   }
 
+  const testType = body.testType;
+
   await rankingRepository.create({
     nickname,
     averageMs: Math.round(averageMs),
-    testType: body.testType,
+    testType,
   });
 
-  const rankings = await rankingRepository.listByType(body.testType);
+  const rankings = await rankingRepository.listByType(testType);
 
   return NextResponse.json({ rankings }, { status: 201 });
 }
