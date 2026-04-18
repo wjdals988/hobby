@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
 
   const nickname = body.nickname?.trim();
   const averageMs = Number(body.averageMs);
+  const incomingTestType = body.testType ?? null;
 
   if (!nickname) {
     return NextResponse.json({ message: "Nickname is required." }, { status: 400 });
@@ -38,11 +39,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "Valid averageMs is required." }, { status: 400 });
   }
 
-  if (!isTestType(body.testType ?? null)) {
+  if (!isTestType(incomingTestType)) {
     return NextResponse.json({ message: "Valid test type is required." }, { status: 400 });
   }
 
-  const testType = body.testType;
+  const testType: ReactionTestType = incomingTestType;
 
   await rankingRepository.create({
     nickname,
