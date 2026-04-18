@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://hobby-hazel.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://speed-jm.vercel.app";
 const siteTitle = "Extreme Reaction Speed Test";
 const siteDescription = "Push your reflexes to the limit in this fast-paced reaction challenge.";
 const ogImagePath = "/og-cover.png";
