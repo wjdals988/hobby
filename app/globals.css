@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top, rgba(89, 195, 255, 0.18), transparent 30%),
+    linear-gradient(180deg, #081221 0%, #07111f 45%, #040914 100%);
+  color: #f7fbff;
+  font-family: "Satoshi", "Pretendard Variable", "Segoe UI", sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"] {
+  touch-action: manipulation;
+}
+
+.touch-zone {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-shell {
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(158, 240, 26, 0.12), transparent 24%),
+    radial-gradient(circle at 80% 0%, rgba(89, 195, 255, 0.18), transparent 24%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: auto, auto, 30px 30px;
+}
+
+.stat-card {
+  @apply rounded-3xl border border-white/10 bg-white/5 p-5 shadow-glow backdrop-blur;
+}
+
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-pulse focus:ring-offset-2 focus:ring-offset-canvas;
+}
