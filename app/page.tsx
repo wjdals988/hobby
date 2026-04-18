@@ -1,3 +1,4 @@
+import packageJson from "@/package.json";
 import { AnimatedPage } from "@/components/animated-page";
 import { NavButton } from "@/components/nav-button";
 
@@ -6,7 +7,13 @@ export default function IntroPage() {
     <div className="app-shell flex min-h-screen items-center justify-center px-4 py-10">
       <AnimatedPage className="w-full max-w-4xl">
         <section className="rounded-[2rem] border border-white/10 bg-white/5 px-6 py-12 text-center shadow-glow backdrop-blur md:px-12 md:py-16">
-          <p className="text-xs uppercase tracking-[0.45em] text-sky/70">reflex challenge</p>
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-xs uppercase tracking-[0.45em] text-sky/70">reflex challenge</p>
+            <span className="rounded-full border border-white/10 bg-white/8 px-4 py-2 text-sm font-medium text-mist/85">
+              Current Version {packageJson.version}
+            </span>
+          </div>
+
           <h1 className="mt-6 font-display text-4xl font-bold leading-tight text-white md:text-7xl">
             극한의 반응속도 테스트
           </h1>
