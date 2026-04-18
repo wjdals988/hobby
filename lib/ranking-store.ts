@@ -26,15 +26,27 @@ function getRankingKey(testType: ReactionTestType) {
 function parseRankingEntries(entries: unknown[]) {
   return entries
     .map((entry) => {
-      if (typeof entry !== "string") {
+      if (typeof entry === "string") {
+        try {
+          return JSON.parse(entry) as RankingEntry;
+        } catch {
+          return null;
+        }
+      }
+
+      if (
+        typeof entry !== "object" ||
+        entry === null ||
+        !("id" in entry) ||
+        !("nickname" in entry) ||
+        !("averageMs" in entry) ||
+        !("testType" in entry) ||
+        !("createdAt" in entry)
+      ) {
         return null;
       }
 
-      try {
-        return JSON.parse(entry) as RankingEntry;
-      } catch {
-        return null;
-      }
+      return entry as RankingEntry;
     })
     .filter((entry): entry is RankingEntry => entry !== null);
 }
@@ -62,7 +74,7 @@ export const rankingRepository: RankingRepository = {
     };
 
     if (redis) {
-      await redis.lpush(getRankingKey(entry.testType), JSON.stringify(newEntry));
+      await redis.lpush(getRankingKey(entry.testType), newEntry);
       return newEntry;
     }
 
