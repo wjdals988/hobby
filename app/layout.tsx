@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://speed-jm.vercel.app";
-const siteTitle = "Extreme Reaction Speed Test";
-const siteDescription = "Push your reflexes to the limit in this fast-paced reaction challenge.";
+const siteTitle = "\uadf9\ud55c\uc758 \ubc18\uc751\uc18d\ub3c4 \ud14c\uc2a4\ud2b8";
+const siteDescription = "\ub2f9\uc2e0\uc758 \ubc18\uc0ac\uc2e0\uacbd\uc744 \ud55c\uacc4\uae4c\uc9c0 \ud14c\uc2a4\ud2b8\ud574\ubcf4\uc138\uc694.";
 const ogImagePath = "/og-cover.png";
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
         url: ogImagePath,
         width: 1408,
         height: 792,
-        alt: "Extreme Reaction Speed Test social preview",
+        alt: "\uadf9\ud55c\uc758 \ubc18\uc751\uc18d\ub3c4 \ud14c\uc2a4\ud2b8 \ubbf8\ub9ac\ubcf4\uae30 \uc774\ubbf8\uc9c0",
       },
     ],
   },
