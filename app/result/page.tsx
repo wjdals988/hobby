@@ -5,10 +5,10 @@ import Link from "next/link";
 import { AnimatedPage } from "@/components/animated-page";
 import { RankingBoard } from "@/components/ranking-board";
 import { TEST_META } from "@/lib/constants";
-import { submitRanking } from "@/lib/ranking-client";
+import { RankingClientResult, submitRanking } from "@/lib/ranking-client";
 import { loadSummary } from "@/lib/session-result";
 import { formatMs } from "@/lib/reaction";
-import { RankingEntry, ReactionSummary } from "@/lib/types";
+import { RankingEntry, RankingStorageMode, ReactionSummary } from "@/lib/types";
 
 export default function ResultPage() {
   const [summary, setSummary] = useState<ReactionSummary | null>(null);
@@ -16,6 +16,7 @@ export default function ResultPage() {
   const [rankings, setRankings] = useState<RankingEntry[]>([]);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [storageMode, setStorageMode] = useState<RankingStorageMode | null>(null);
 
   useEffect(() => {
     setSummary(loadSummary());
@@ -36,14 +37,20 @@ export default function ResultPage() {
     setMessage("");
 
     try {
-      const nextRankings = await submitRanking({
+      const result: RankingClientResult = await submitRanking({
         nickname: nickname.trim(),
         averageMs: summary.averageMs,
         testType: summary.testType,
       });
 
-      setRankings(nextRankings);
-      setMessage("랭킹 등록이 완료되었습니다.");
+      setRankings(result.rankings);
+      setStorageMode(result.storageMode);
+
+      if (result.storageMode === "memory") {
+        setMessage("Redis가 연결되지 않아 이 브라우저에만 임시 저장되었습니다.");
+      } else {
+        setMessage("글로벌 랭킹에 등록되었습니다.");
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "랭킹 등록에 실패했습니다.");
     } finally {
@@ -148,6 +155,12 @@ export default function ResultPage() {
                 >
                   {isSubmitting ? "등록 중..." : "랭킹 등록"}
                 </button>
+
+                {storageMode === "memory" ? (
+                  <p className="rounded-2xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-100">
+                    현재 Redis 환경변수가 없어 글로벌 영구 저장이 아니라 브라우저 임시 저장 모드입니다.
+                  </p>
+                ) : null}
 
                 {message ? (
                   <p

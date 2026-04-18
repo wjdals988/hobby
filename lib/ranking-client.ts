@@ -8,10 +8,12 @@ type RankingPayload = {
   testType: ReactionTestType;
 };
 
-type RankingResponse = {
+export type RankingClientResult = {
   rankings: RankingEntry[];
   storageMode: RankingStorageMode;
 };
+
+type RankingResponse = RankingClientResult;
 
 const LOCAL_RANKING_STORAGE_KEY = "reaction-local-rankings";
 
@@ -72,7 +74,7 @@ function appendLocalRanking(payload: RankingPayload) {
   return listLocalRankings(payload.testType);
 }
 
-export async function fetchRankings(testType: ReactionTestType) {
+export async function fetchRankings(testType: ReactionTestType): Promise<RankingClientResult> {
   const response = await fetch(`/api/ranking?testType=${testType}`, {
     cache: "no-store",
   });
@@ -84,13 +86,16 @@ export async function fetchRankings(testType: ReactionTestType) {
   const data = (await response.json()) as RankingResponse;
 
   if (data.storageMode === "memory") {
-    return listLocalRankings(testType);
+    return {
+      rankings: listLocalRankings(testType),
+      storageMode: "memory",
+    };
   }
 
-  return data.rankings;
+  return data;
 }
 
-export async function submitRanking(payload: RankingPayload) {
+export async function submitRanking(payload: RankingPayload): Promise<RankingClientResult> {
   const response = await fetch("/api/ranking", {
     method: "POST",
     headers: {
@@ -110,8 +115,11 @@ export async function submitRanking(payload: RankingPayload) {
   const data = (await response.json()) as RankingResponse;
 
   if (data.storageMode === "memory") {
-    return appendLocalRanking(payload);
+    return {
+      rankings: appendLocalRanking(payload),
+      storageMode: "memory",
+    };
   }
 
-  return data.rankings;
+  return data;
 }

@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatedPage } from "@/components/animated-page";
 import { RankingBoard } from "@/components/ranking-board";
-import { fetchRankings } from "@/lib/ranking-client";
-import { RankingEntry, ReactionTestType } from "@/lib/types";
+import { fetchRankings, RankingClientResult } from "@/lib/ranking-client";
+import { RankingEntry, RankingStorageMode, ReactionTestType } from "@/lib/types";
 
 const tabs: { label: string; type: ReactionTestType }[] = [
   { label: "색상 변경", type: "color" },
@@ -16,6 +16,7 @@ export default function RankingPage() {
   const [selectedType, setSelectedType] = useState<ReactionTestType>("color");
   const [entries, setEntries] = useState<RankingEntry[]>([]);
   const [message, setMessage] = useState("랭킹을 불러오는 중입니다...");
+  const [storageMode, setStorageMode] = useState<RankingStorageMode | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -23,16 +24,17 @@ export default function RankingPage() {
     setMessage("랭킹을 불러오는 중입니다...");
 
     fetchRankings(selectedType)
-      .then((nextEntries) => {
+      .then((result: RankingClientResult) => {
         if (!active) {
           return;
         }
 
-        setEntries(nextEntries);
+        setEntries(result.rankings);
+        setStorageMode(result.storageMode);
         setMessage(
-          nextEntries.length === 0
+          result.rankings.length === 0
             ? "아직 등록된 기록이 없습니다."
-            : `${nextEntries.length}개의 기록을 불러왔습니다.`,
+            : `${result.rankings.length}개의 기록을 불러왔습니다.`,
         );
       })
       .catch((error) => {
@@ -41,6 +43,7 @@ export default function RankingPage() {
         }
 
         setEntries([]);
+        setStorageMode(null);
         setMessage(error instanceof Error ? error.message : "랭킹을 불러오지 못했습니다.");
       });
 
@@ -81,6 +84,12 @@ export default function RankingPage() {
                 );
               })}
             </div>
+
+            {storageMode === "memory" ? (
+              <p className="mt-4 rounded-2xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-100">
+                현재 Redis 환경변수가 없어 이 브라우저의 임시 랭킹만 표시되고 있습니다.
+              </p>
+            ) : null}
 
             <p className="mt-4 text-sm text-mist/70" data-testid="ranking-status">
               {message}
