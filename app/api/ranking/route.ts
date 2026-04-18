@@ -10,10 +10,7 @@ export async function GET(request: NextRequest) {
   const testType = request.nextUrl.searchParams.get("testType");
 
   if (!isTestType(testType)) {
-    return NextResponse.json(
-      { message: "유효한 testType이 필요합니다." },
-      { status: 400 },
-    );
+    return NextResponse.json({ message: "Valid testType is required." }, { status: 400 });
   }
 
   const rankings = await rankingRepository.listByType(testType);
@@ -27,25 +24,22 @@ export async function POST(request: NextRequest) {
     | null;
 
   if (!body) {
-    return NextResponse.json({ message: "잘못된 요청입니다." }, { status: 400 });
+    return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
   }
 
   const nickname = body.nickname?.trim();
   const averageMs = Number(body.averageMs);
 
   if (!nickname) {
-    return NextResponse.json({ message: "닉네임을 입력해 주세요." }, { status: 400 });
+    return NextResponse.json({ message: "Nickname is required." }, { status: 400 });
   }
 
   if (!Number.isFinite(averageMs) || averageMs <= 0) {
-    return NextResponse.json(
-      { message: "유효한 평균 속도가 필요합니다." },
-      { status: 400 },
-    );
+    return NextResponse.json({ message: "Valid averageMs is required." }, { status: 400 });
   }
 
   if (!isTestType(body.testType ?? null)) {
-    return NextResponse.json({ message: "유효한 테스트 타입이 필요합니다." }, { status: 400 });
+    return NextResponse.json({ message: "Valid test type is required." }, { status: 400 });
   }
 
   await rankingRepository.create({

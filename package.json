@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@upstash/redis": "^1.35.3",
     "framer-motion": "^12.10.5",
     "next": "^15.0.0",
     "react": "^19.0.0",

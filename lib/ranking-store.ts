@@ -1,3 +1,4 @@
+import { redis } from "@/lib/redis";
 import { RankingEntry, ReactionTestType } from "@/lib/types";
 
 type RankingRepository = {
@@ -6,6 +7,7 @@ type RankingRepository = {
 };
 
 const inMemoryStore: RankingEntry[] = [];
+const RANKING_LIST_PREFIX = "reaction-ranking";
 
 function sortEntries(entries: RankingEntry[]) {
   return [...entries].sort((left, right) => {
@@ -17,8 +19,33 @@ function sortEntries(entries: RankingEntry[]) {
   });
 }
 
+function getRankingKey(testType: ReactionTestType) {
+  return `${RANKING_LIST_PREFIX}:${testType}`;
+}
+
+function parseRankingEntries(entries: unknown[]) {
+  return entries
+    .map((entry) => {
+      if (typeof entry !== "string") {
+        return null;
+      }
+
+      try {
+        return JSON.parse(entry) as RankingEntry;
+      } catch {
+        return null;
+      }
+    })
+    .filter((entry): entry is RankingEntry => entry !== null);
+}
+
 export const rankingRepository: RankingRepository = {
   async listByType(testType) {
+    if (redis) {
+      const rawEntries = await redis.lrange(getRankingKey(testType), 0, -1);
+      return sortEntries(parseRankingEntries(rawEntries)).slice(0, 10);
+    }
+
     return sortEntries(
       inMemoryStore.filter((entry) => entry.testType === testType),
     ).slice(0, 10);
@@ -29,6 +56,11 @@ export const rankingRepository: RankingRepository = {
       id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
     };
+
+    if (redis) {
+      await redis.lpush(getRankingKey(entry.testType), JSON.stringify(newEntry));
+      return newEntry;
+    }
 
     inMemoryStore.push(newEntry);
     return newEntry;
