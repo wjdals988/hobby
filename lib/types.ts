@@ -1,5 +1,7 @@
 export type ReactionTestType = "color" | "target";
 
+export type RankingStorageMode = "redis" | "memory";
+
 export type ReactionRoundResult = {
   round: number;
   reactionMs: number;

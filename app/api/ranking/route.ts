@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { rankingRepository } from "@/lib/ranking-store";
+import { getRankingStorageMode, rankingRepository } from "@/lib/ranking-store";
 import { ReactionTestType } from "@/lib/types";
 
 function isTestType(value: string | null): value is ReactionTestType {
@@ -14,8 +14,9 @@ export async function GET(request: NextRequest) {
   }
 
   const rankings = await rankingRepository.listByType(testType);
+  const storageMode = getRankingStorageMode();
 
-  return NextResponse.json({ rankings });
+  return NextResponse.json({ rankings, storageMode });
 }
 
 export async function POST(request: NextRequest) {
@@ -52,6 +53,7 @@ export async function POST(request: NextRequest) {
   });
 
   const rankings = await rankingRepository.listByType(testType);
+  const storageMode = getRankingStorageMode();
 
-  return NextResponse.json({ rankings }, { status: 201 });
+  return NextResponse.json({ rankings, storageMode }, { status: 201 });
 }

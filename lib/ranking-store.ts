@@ -1,5 +1,5 @@
 import { redis } from "@/lib/redis";
-import { RankingEntry, ReactionTestType } from "@/lib/types";
+import { RankingEntry, RankingStorageMode, ReactionTestType } from "@/lib/types";
 
 type RankingRepository = {
   listByType: (testType: ReactionTestType) => Promise<RankingEntry[]>;
@@ -37,6 +37,10 @@ function parseRankingEntries(entries: unknown[]) {
       }
     })
     .filter((entry): entry is RankingEntry => entry !== null);
+}
+
+export function getRankingStorageMode(): RankingStorageMode {
+  return redis ? "redis" : "memory";
 }
 
 export const rankingRepository: RankingRepository = {

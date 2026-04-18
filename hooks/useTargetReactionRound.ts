@@ -4,6 +4,9 @@ import { RefObject, useEffect, useRef, useState } from "react";
 import { getRandomBetween } from "@/lib/reaction";
 
 const TARGET_SIZE = 88;
+const TARGET_HORIZONTAL_PADDING = 24;
+const TARGET_BOTTOM_PADDING = 24;
+const TARGET_TOP_SAFE_INSET = 160;
 
 type Position = {
   x: number;
@@ -18,7 +21,7 @@ export function useTargetReactionRound(
   const visibleAtRef = useRef<number | null>(null);
   const resolvedRef = useRef(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [position, setPosition] = useState<Position>({ x: 120, y: 120 });
+  const [position, setPosition] = useState<Position>({ x: 120, y: 180 });
 
   useEffect(() => {
     resolvedRef.current = false;
@@ -27,10 +30,15 @@ export function useTargetReactionRound(
       const bounds = containerRef.current?.getBoundingClientRect();
       const width = bounds?.width ?? 320;
       const height = bounds?.height ?? 420;
-      const maxX = Math.max(24, width - TARGET_SIZE - 24);
-      const maxY = Math.max(24, height - TARGET_SIZE - 24);
-      const x = getRandomBetween(24, Math.round(maxX));
-      const y = getRandomBetween(24, Math.round(maxY));
+      const minX = TARGET_HORIZONTAL_PADDING;
+      const minY = Math.min(
+        Math.max(TARGET_TOP_SAFE_INSET, TARGET_HORIZONTAL_PADDING),
+        Math.max(TARGET_HORIZONTAL_PADDING, height - TARGET_SIZE - TARGET_BOTTOM_PADDING),
+      );
+      const maxX = Math.max(minX, width - TARGET_SIZE - TARGET_HORIZONTAL_PADDING);
+      const maxY = Math.max(minY, height - TARGET_SIZE - TARGET_BOTTOM_PADDING);
+      const x = getRandomBetween(Math.round(minX), Math.round(maxX));
+      const y = getRandomBetween(Math.round(minY), Math.round(maxY));
 
       setPosition({ x, y });
       visibleAtRef.current = performance.now();
