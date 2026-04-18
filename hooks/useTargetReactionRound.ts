@@ -41,7 +41,6 @@ export function useTargetReactionRound(
       const y = getRandomBetween(Math.round(minY), Math.round(maxY));
 
       setPosition({ x, y });
-      visibleAtRef.current = performance.now();
       setIsVisible(true);
     }, getRandomBetween(1000, 3000));
 
@@ -51,6 +50,15 @@ export function useTargetReactionRound(
       }
     };
   }, [containerRef]);
+
+  useEffect(() => {
+    if (isVisible) {
+      visibleAtRef.current = performance.now();
+      return;
+    }
+
+    visibleAtRef.current = null;
+  }, [isVisible, position.x, position.y]);
 
   function handleTargetPress() {
     if (!isVisible || visibleAtRef.current === null || resolvedRef.current) {

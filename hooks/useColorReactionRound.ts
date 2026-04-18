@@ -26,7 +26,6 @@ export function useColorReactionRound(onComplete: (reactionMs: number) => void) 
     setStatus("waiting");
 
     timeoutRef.current = window.setTimeout(() => {
-      readyAtRef.current = performance.now();
       setStatus("ready");
     }, getRandomBetween(2000, 5000));
   };
@@ -44,6 +43,15 @@ export function useColorReactionRound(onComplete: (reactionMs: number) => void) 
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (status === "ready") {
+      readyAtRef.current = performance.now();
+      return;
+    }
+
+    readyAtRef.current = null;
+  }, [status]);
 
   function handlePress() {
     if (resolvedRef.current) {
